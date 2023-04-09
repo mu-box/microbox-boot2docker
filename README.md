@@ -1,4 +1,4 @@
-# Boot2docker with extra packages for nanobox.
+# Boot2docker with extra packages for microbox.
 
 ## Building the image
 
@@ -35,7 +35,7 @@ This requires the [aws cli](https://aws.amazon.com/cli/) to be installed.
 ```
 $ make publish
 ```
-or 
+or
 ```
 $ make publish beta
 ```

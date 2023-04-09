@@ -13,24 +13,27 @@ Vagrant.configure(2) do |config|
   # install docker
   config.vm.provision "shell", inline: <<-SCRIPT
     if [[ ! `which docker > /dev/null 2>&1` ]]; then
+      [ -f /usr/lib/apt/methods/https ] || \
+        apt-get -y install apt-transport-https
+
       # add docker's gpg key
-      apt-key adv \
-        --keyserver hkp://p80.pool.sks-keyservers.net:80 \
-        --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+      mkdir -m 0755 -p /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+        gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
       # add the source to our apt sources
       echo \
-        "deb https://apt.dockerproject.org/repo ubuntu-trusty main \n" \
+        "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu trusty main \n" \
           > /etc/apt/sources.list.d/docker.list
 
       # update the package index
       apt-get -y update
 
       # ensure the old repo is purged
-      apt-get -y purge lxc-docker
+      apt-get -y purge lxc-docker docker docker-engine docker.io containerd runc
 
       # install docker
-      apt-get -y install docker-engine
+      apt-get -y install docker-ce
     fi
   SCRIPT
 
